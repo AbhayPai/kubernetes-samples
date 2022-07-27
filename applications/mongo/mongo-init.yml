@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: mongodb-secret
+  namespace: mongo
 type: Opaque
 data:
   mongodb-root-username: dXNlcm5hbWU=
@@ -11,6 +12,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mongodb-deployment
+  namespace: mongo
   labels:
     app: mongodb
 spec:
@@ -44,6 +46,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mongodb-service
+  namespace: mongo
 spec:
   selector:
     app: mongodb
@@ -56,6 +59,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mongodb-configmap
+  namespace: mongo
 data:
   mongodb-url: mongodb-service
 ---
@@ -63,6 +67,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mongoexpress-deployment
+  namespace: mongo
   labels:
     app: mongoexpress
 spec:
@@ -101,6 +106,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mongoexpress-service
+  namespace: mongo
 spec:
   selector:
     app: mongoexpress
