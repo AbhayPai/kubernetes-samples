@@ -2,11 +2,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mongoexpress-service
-  namespace: mongo
+  namespace: app-mongo
 spec:
   selector:
     app: mongoexpress
-  type: LoadBalancer
   ports:
     - protocol: TCP
       port: 8081
