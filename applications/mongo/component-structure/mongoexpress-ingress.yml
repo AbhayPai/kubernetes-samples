@@ -1,3 +1,4 @@
+# https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -5,7 +6,7 @@ metadata:
   namespace: app-mongo
 spec:
   rules:
-  - host: "foo.bar.com"
+  - host: "mongoexpress.com"
     http:
       paths:
       - pathType: Prefix

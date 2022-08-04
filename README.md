@@ -3,4 +3,4 @@
 1. Nginx Application
 
 2. Mongo Application
-* ![Mongo Application](./images/application-mongo.png)
+* ![Mongo Application](./applications/mongo/images/architecture-application.png)

@@ -1,5 +1,7 @@
 # Mongo Application
 
+![Application-Architecture](./images/architecture-application.png "Application-Architecture")
+
 ![Architecture-Flow](./images/architecture-flow.png "Architecture-Flow")
 
 ## To run this application using this configuration yaml file please follow below step.
@@ -16,23 +18,17 @@ minikube addons enable ingress
 ```
 ![Enable ingress addon using minikube](./images/step-2-minikube-addons-ingress.png "Enable ingress addon using minikube")
 
-3. Create "app-mongo" namespace in your cluster
-```
-kubectl create namespace app-mongo
-```
-![Create app-mongo namespace in your cluster](./images/step-3-namespace-app-mongo.png "Create app-mongo namespace in your cluster")
-
-4. Launch configuration for mongo application
+3. Launch configuration for mongo application
 ```
 kubectl apply -f app-mongo-init.yml
 ```
-![Launch configuration for mongo application](./images/step-4-launch-mongoexpress.png "Launch configuration for mongo application")
+![Launch configuration for mongo application](./images/step-3-launch-mongoexpress.png "Launch configuration for mongo application")
 
-5. Verify mongo application
+4. Verify mongo application
 ```
 kubectl get all -n app-mongo; kubectl get ingress -n app-mongo
 ```
-![Verify mongo application](./images/step-5-verify-mongoexpress.png "Verify mongo application")
+![Verify mongo application](./images/step-4-verify-mongoexpress.png "Verify mongo application")
 
 
 ## Takeaway points

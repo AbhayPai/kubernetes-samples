@@ -17,17 +17,17 @@ spec:
     spec:
       containers:
       - name: mongodb
-        image: mongo
+        image: mongo # https://hub.docker.com/_/mongo
         ports:
         - containerPort: 27017
         env:
-        - name: MONGO_INITDB_ROOT_USERNAME
+        - name: MONGO_INITDB_ROOT_USERNAME # Environment Variables
           valueFrom:
-            secretKeyRef:
+            secretKeyRef: # https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables
               name: mongodb-secret
               key: mongodb-root-username
-        - name: MONGO_INITDB_ROOT_PASSWORD
+        - name: MONGO_INITDB_ROOT_PASSWORD # Environment Variables
           valueFrom:
-            secretKeyRef:
+            secretKeyRef: # https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables
               name: mongodb-secret
               key: mongodb-root-password

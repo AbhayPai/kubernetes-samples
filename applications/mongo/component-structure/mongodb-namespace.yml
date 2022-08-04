@@ -1,0 +1,5 @@
+# https://kubernetes.io/docs/tasks/administer-cluster/namespaces/#creating-a-new-namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: app-mongo

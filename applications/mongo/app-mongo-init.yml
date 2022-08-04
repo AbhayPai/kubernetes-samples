@@ -1,3 +1,10 @@
+# https://kubernetes.io/docs/tasks/administer-cluster/namespaces/#creating-a-new-namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: app-mongo
+---
+# https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-config-file/#create-the-config-file
 apiVersion: v1
 kind: Secret
 metadata:
@@ -8,6 +15,7 @@ data:
   mongodb-root-username: dXNlcm5hbWU=
   mongodb-root-password: cGFzc3dvcmQ=
 ---
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#creating-a-deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -27,21 +35,22 @@ spec:
     spec:
       containers:
       - name: mongodb
-        image: mongo
+        image: mongo # https://hub.docker.com/_/mongo
         ports:
         - containerPort: 27017
         env:
-        - name: MONGO_INITDB_ROOT_USERNAME
+        - name: MONGO_INITDB_ROOT_USERNAME # Environment Variables
           valueFrom:
-            secretKeyRef:
+            secretKeyRef: # https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables
               name: mongodb-secret
               key: mongodb-root-username
-        - name: MONGO_INITDB_ROOT_PASSWORD
+        - name: MONGO_INITDB_ROOT_PASSWORD # Environment Variables
           valueFrom:
-            secretKeyRef:
+            secretKeyRef: # https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables
               name: mongodb-secret
               key: mongodb-root-password
 ---
+# https://kubernetes.io/docs/concepts/services-networking/service/#services-without-selectors
 apiVersion: v1
 kind: Service
 metadata:
@@ -52,9 +61,10 @@ spec:
     app: mongodb
   ports:
     - protocol: TCP
-      port: 27017
-      targetPort: 27017
+      port: 27017 # Mongodb port
+      targetPort: 27017 # Mongodb port
 ---
+# https://kubernetes.io/docs/concepts/configuration/configmap/#configmaps-and-pods
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -63,6 +73,7 @@ metadata:
 data:
   mongodb-url: mongodb-service
 ---
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#creating-a-deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -82,26 +93,27 @@ spec:
     spec:
       containers:
       - name: mongoexpress
-        image: mongo-express
+        image: mongo-express # https://hub.docker.com/_/mongo-express
         ports:
         - containerPort: 8081
         env:
-        - name: ME_CONFIG_MONGODB_ADMINUSERNAME
+        - name: ME_CONFIG_MONGODB_ADMINUSERNAME # Configuration
           valueFrom:
             secretKeyRef:
               name: mongodb-secret
               key: mongodb-root-username
-        - name: ME_CONFIG_MONGODB_ADMINPASSWORD
+        - name: ME_CONFIG_MONGODB_ADMINPASSWORD # Configuration
           valueFrom:
-            secretKeyRef:
+            secretKeyRef: # https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables
               name: mongodb-secret
               key: mongodb-root-password
-        - name: ME_CONFIG_MONGODB_SERVER
+        - name: ME_CONFIG_MONGODB_SERVER # Configuration
           valueFrom:
-            configMapKeyRef:
+            configMapKeyRef: # https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables
               name: mongodb-configmap
               key: mongodb-url
 ---
+# https://kubernetes.io/docs/concepts/services-networking/service/#services-without-selectors
 apiVersion: v1
 kind: Service
 metadata:
@@ -112,9 +124,10 @@ spec:
     app: mongoexpress
   ports:
     - protocol: TCP
-      port: 8081
-      targetPort: 8081
+      port: 8081 # mongoexpress port
+      targetPort: 8081 # mongoexpress port
 ---
+# https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

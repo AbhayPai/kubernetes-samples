@@ -1,3 +1,4 @@
+# https://kubernetes.io/docs/concepts/configuration/configmap/#configmaps-and-pods
 apiVersion: v1
 kind: ConfigMap
 metadata:
