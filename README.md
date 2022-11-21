@@ -2,5 +2,7 @@
 
 1. Nginx Application
 
-2. Mongo Application
-* ![Mongo Application](./applications/mongo/images/architecture-application.png)
+2. Mongo Application<br>
+![Mongo Application](./applications/mongo/images/architecture-application.png)
+
+3. Drupal Application

@@ -1,0 +1,101 @@
+# https://kubernetes.io/docs/tasks/administer-cluster/namespaces/#creating-a-new-namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: app-drupal
+---
+# https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-config-file/#create-the-config-file
+apiVersion: v1
+kind: Secret
+metadata:
+  name: drupal-secret
+  namespace: app-drupal
+type: Opaque
+data:
+  MYSQL_DATABASE: ZHJ1cGFs
+  MYSQL_ROOT_USER: dXNlcg==
+  MYSQL_DATABASE_URL: ZHJ1cGFs
+  MYSQL_ROOT_PASSWORD: cGFzc3dvcmQ=
+---
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#creating-a-deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drupal-deployment
+  namespace: app-drupal
+  labels:
+    app: drupal
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: drupal
+  template:
+    metadata:
+      labels:
+        app: drupal
+    spec:
+      containers:
+      - name: drupal
+        image: drupal:9.4.8-fpm-alpine3.16 # https://hub.docker.com/_/drupal?tab=tags&page=1&name=9.4
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        - name: MYSQL_DATABASE_URL # Configuration
+          valueFrom:
+            secretKeyRef: # https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables
+              name: drupal-secret
+              key: MYSQL_DATABASE_URL
+        - name: MYSQL_DATABASE # Configuration
+          valueFrom:
+            secretKeyRef: # https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables
+              name: drupal-secret
+              key: MYSQL_DATABASE
+        - name: MYSQL_ROOT_USER # Configuration
+          valueFrom:
+            secretKeyRef: # https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables
+              name: drupal-secret
+              key: MYSQL_ROOT_USER
+        - name: MYSQL_ROOT_PASSWORD # Configuration
+          valueFrom:
+            secretKeyRef: # https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables
+              name: drupal-secret
+              key: MYSQL_ROOT_PASSWORD
+        lifecycle: # https://kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/#define-poststart-and-prestop-handlers
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "env > /opt/.env"]
+---
+# https://kubernetes.io/docs/concepts/services-networking/service/#services-without-selectors
+apiVersion: v1
+kind: Service
+metadata:
+  name: drupal-service
+  namespace: app-drupal
+spec:
+  selector:
+    app: drupal
+  ports:
+    - protocol: TCP
+      targetPort: 8080 # drupal port
+      port: 8080 # drupal port
+---
+# https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: drupal-ingress
+  namespace: app-drupal
+spec:
+  rules:
+  - host: "drupal.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: drupal-service
+            port:
+              number: 8080
